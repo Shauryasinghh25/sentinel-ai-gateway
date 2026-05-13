@@ -1,0 +1,105 @@
+{
+  "uid": "sentinelai-main",
+  "title": "SentinelAI Gateway",
+  "tags": ["sentinelai", "security", "llm"],
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": { "from": "now-24h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Total Requests",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [{
+        "expr": "sum(sentinel_requests_total)",
+        "legendFormat": "Total"
+      }],
+      "options": { "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "blue", "value": null }] } } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "Blocked Requests",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "targets": [{
+        "expr": "sum(sentinel_blocked_total)",
+        "legendFormat": "Blocked"
+      }],
+      "options": { "colorMode": "background", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "red", "value": null }] } } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Block Rate %",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "targets": [{
+        "expr": "sum(sentinel_blocked_total) / sum(sentinel_requests_total) * 100",
+        "legendFormat": "Block Rate"
+      }],
+      "options": { "colorMode": "background" },
+      "fieldConfig": { "defaults": { "unit": "percent", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 10 }, { "color": "red", "value": 25 }] } } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Total Tokens",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "sum(sentinel_tokens_total)", "legendFormat": "Tokens" }],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "purple", "value": null }] } } }
+    },
+    {
+      "id": 5, "type": "stat", "title": "Active Requests",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "targets": [{ "expr": "sentinel_active_requests", "legendFormat": "Active" }],
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 5 }, { "color": "red", "value": 20 }] } } }
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "Request Rate (per minute)",
+      "gridPos": { "x": 0, "y": 4, "w": 16, "h": 8 },
+      "targets": [
+        { "expr": "rate(sentinel_requests_total[1m]) * 60", "legendFormat": "Total - {{action}}" },
+        { "expr": "rate(sentinel_blocked_total[1m]) * 60", "legendFormat": "Blocked - {{attack_type}}" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqpm", "custom": { "fillOpacity": 15, "lineWidth": 2 } } }
+    },
+    {
+      "id": 7, "type": "piechart", "title": "Attack Type Breakdown",
+      "gridPos": { "x": 16, "y": 4, "w": 8, "h": 8 },
+      "targets": [{ "expr": "sum by (attack_type) (sentinel_attack_types_total)", "legendFormat": "{{attack_type}}" }],
+      "options": { "pieType": "donut", "legendDisplayMode": "table", "placement": "right" }
+    },
+    {
+      "id": 8, "type": "heatmap", "title": "Request Latency Heatmap",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "targets": [{ "expr": "rate(sentinel_request_latency_ms_bucket[5m])", "legendFormat": "{{le}}" }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 9, "type": "timeseries", "title": "Security Check Latency p50/p95/p99",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, rate(sentinel_security_check_latency_ms_bucket[5m]))", "legendFormat": "p50" },
+        { "expr": "histogram_quantile(0.95, rate(sentinel_security_check_latency_ms_bucket[5m]))", "legendFormat": "p95" },
+        { "expr": "histogram_quantile(0.99, rate(sentinel_security_check_latency_ms_bucket[5m]))", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "Risk Score Distribution",
+      "gridPos": { "x": 0, "y": 20, "w": 12, "h": 8 },
+      "targets": [
+        { "expr": "histogram_quantile(0.50, rate(sentinel_risk_scores_bucket[5m]))", "legendFormat": "p50 risk score" },
+        { "expr": "histogram_quantile(0.95, rate(sentinel_risk_scores_bucket[5m]))", "legendFormat": "p95 risk score" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 } }
+    },
+    {
+      "id": 11, "type": "bargauge", "title": "Requests by Provider",
+      "gridPos": { "x": 12, "y": 20, "w": 12, "h": 8 },
+      "targets": [{ "expr": "sum by (provider) (sentinel_requests_total)", "legendFormat": "{{provider}}" }],
+      "options": { "orientation": "horizontal", "displayMode": "gradient" }
+    },
+    {
+      "id": 12, "type": "timeseries", "title": "PII Detections by Type",
+      "gridPos": { "x": 0, "y": 28, "w": 24, "h": 8 },
+      "targets": [{ "expr": "rate(sentinel_pii_detections_total[5m]) * 60", "legendFormat": "{{pii_type}}" }],
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    }
+  ],
+  "schemaVersion": 38
+}

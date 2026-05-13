@@ -1,0 +1,93 @@
+policies:
+  default:
+    name: "Default Security Policy"
+    version: "1.0"
+    toxicity_threshold: 0.8
+    injection_confidence_threshold: 0.7
+    risk_score_block_threshold: 0.85
+    block_pii: true
+    redact_pii: true
+    block_financial_advice: false
+    block_medical_advice: false
+    block_code_execution: false
+    block_political_content: false
+    allowed_tools:
+      - weather_api
+      - calculator
+      - currency_converter
+      - text_formatter
+      - uuid_generator
+      - math_eval
+    blocked_tools:
+      - shell
+      - exec
+      - bash
+      - cmd
+      - delete_file
+      - format_disk
+      - drop_table
+      - get_credentials
+      - get_api_key
+    allowed_topics: []
+    blocked_topics:
+      - illegal drugs
+      - weapons manufacturing
+      - human trafficking
+    rate_limit_requests: 100
+    rate_limit_window_seconds: 60
+    preferred_model: "gpt-4o-mini"
+    fallback_model: "gpt-3.5-turbo"
+    allowed_providers:
+      - openai
+      - anthropic
+      - google
+
+  strict:
+    name: "Strict Security Policy"
+    version: "1.0"
+    toxicity_threshold: 0.5
+    injection_confidence_threshold: 0.5
+    risk_score_block_threshold: 0.65
+    block_pii: true
+    redact_pii: true
+    block_financial_advice: true
+    block_medical_advice: true
+    block_code_execution: true
+    block_political_content: true
+    allowed_tools:
+      - calculator
+      - weather_api
+    blocked_tools: []
+    allowed_topics: []
+    blocked_topics: []
+    rate_limit_requests: 50
+    rate_limit_window_seconds: 60
+    preferred_model: "gpt-4o-mini"
+    allowed_providers:
+      - openai
+
+  permissive:
+    name: "Permissive Policy (Dev/Test Only)"
+    version: "1.0"
+    toxicity_threshold: 0.95
+    injection_confidence_threshold: 0.90
+    risk_score_block_threshold: 0.98
+    block_pii: false
+    redact_pii: true
+    block_financial_advice: false
+    block_medical_advice: false
+    block_code_execution: false
+    block_political_content: false
+    allowed_tools: []
+    blocked_tools:
+      - shell
+      - exec
+    allowed_topics: []
+    blocked_topics: []
+    rate_limit_requests: 1000
+    rate_limit_window_seconds: 60
+    allowed_providers:
+      - openai
+      - anthropic
+      - google
+      - ollama
