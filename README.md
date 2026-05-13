@@ -311,21 +311,6 @@ Key environment variables in `.env`:
 
 ---
 
-## 🏭 Production Deployment
-
-```bash
-# Kubernetes
-kubectl create namespace sentinelai
-kubectl apply -f kubernetes/deployment.yaml
-
-# Scale manually
-kubectl scale deployment sentinelai-gateway --replicas=5 -n sentinelai
-
-# HPA auto-scales 2-10 replicas based on CPU/memory
-```
-
----
-
 ## 📈 Monitoring
 
 - **Prometheus**: `http://localhost:9090`
