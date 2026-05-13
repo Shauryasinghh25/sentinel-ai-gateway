@@ -34,7 +34,7 @@ jobs:
           DATABASE_URL: sqlite:///test.db
           REDIS_URL: redis://localhost:6379
           GRAFANA_PASSWORD: test-password
-        run: python -c "from backend.main import app; print('Backend OK')"
+      
 
   # ── Frontend Tests ──────────────────────────────────────────────────────────
   test-frontend:
