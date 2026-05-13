@@ -29,8 +29,12 @@ jobs:
       - name: Backend smoke check
         run: python -c "from backend.main import app; print('Backend OK')"
         env:
-          ENVIRONMENT: test
-          DEBUG: "true"
+          SECRET_KEY: test-secret
+          DEMO_API_KEY: test-demo-key
+          DATABASE_URL: sqlite:///test.db
+          REDIS_URL: redis://localhost:6379
+          GRAFANA_PASSWORD: test-password
+        run: python -c "from backend.main import app; print('Backend OK')"
 
   # ── Frontend Tests ──────────────────────────────────────────────────────────
   test-frontend:
